@@ -64,7 +64,19 @@ document.onkeydown = function (event) {
 	if (!car.isCrashed) {
 		switch (event.keyCode) {
 			case 90: //z
-				car.y -= 10;
+				if (((car.rotation > 315 && car.rotation >= 0) || (car.rotation >= 0 && car.rotation < 45)) || ((car.rotation < -315 && car.rotation >= -360) || (car.rotation <=0) && (car.rotation > -45))){
+					car.y -= 10;
+				} 
+				else if ((car.rotation > 45 && car.rotation < 135) || (car.rotation < -225 && car.rotation > -315)){
+					car.x += 10;
+				}
+				else if ((car.rotation > 135 && car.rotation < 225 )|| (car.rotation < -135 && car.rotation > -225)){
+					car.y += 10;
+				}
+				else if ((car.rotation > 225 && car.rotation < 315) || (car.rotation < -45 && car.rotation > -135)){
+					car.x -= 10;
+				};
+
 				break;
 
 			case 83: //s
@@ -72,13 +84,22 @@ document.onkeydown = function (event) {
 				break;
 
 			case 81: //q
-				
 				car.rotation -=10;
+				console.log(car.rotation);
+
+				if (car.rotation === -360) {
+					car.rotation = 0;
+				};
 				break;
 
 			case 68: //d
 				
 				car.rotation +=10;
+				console.log(car.rotation);
+
+				if (car.rotation === 360) {
+					car.rotation = 0;
+				};
 				break;
 
 		};
