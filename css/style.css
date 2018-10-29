@@ -2,3 +2,13 @@
     font-family: 'SolidSans';
     src: url('../resources/SolidSans.ttf');
 }
+
+header {
+	display: flex;
+	justify-content: center;
+}
+
+.container {
+	display: flex;
+	justify-content: center;
+}

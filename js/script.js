@@ -17,19 +17,23 @@ function drawingLoopStart () {
 
 	ctx.drawImage(startscreenImg, 0, 0, 1000, 1000);
 
-	if (startCounter <= 60){
+
+
+//-------------------------start screen--------------
+
+	if (startCounter <= 30){
 		ctx.fillStyle = "white";
 		ctx.font = "bold 60px SolidSans"
-		ctx.fillText("PRESS ANY KEY", 300, 850);
+		ctx.fillText("PRESS ANY KEY TO START", 185, 850);
 	};
 
-	if (startCounter > 60){
+	if (startCounter > 30){
 		ctx.fillStyle = "transparent";
 		ctx.font = "bold 60px SolidSans"
-		ctx.fillText("PRESS ANY KEY", 300, 850);
+		ctx.fillText("PRESS ANY KEY TO START", 185, 850);
 	};
 
-	if (startCounter === 120) {
+	if (startCounter === 60) {
 		startCounter = 0;
 	};
 
@@ -63,22 +67,22 @@ carImg.src = "./images/car1.png";
 
 var car = {
 	x: 500,
-	y: 500,
+	y: 680,
 	width: 57,
 	height: 81,
 	isCrashed: false,
-	rotation: 0,
+	rotation: 90,
 	speed: 0,
 	acceleration: 0.5,
 	maxSpeed: 30,
 	brake: 1,
-	maniability : 7,
+	maniability : 6,
 	rotate: function (){
 		return this.rotation * Math.PI/180;
 	},
 	drawMe: function () {
 
-		ctx.translate(this.x+this.width/2, this.y+this.height/2)
+		ctx.translate(this.x+this.width/2, this.y+this.height/2	)
 		ctx.rotate(this.rotate());
 
 
@@ -96,7 +100,7 @@ class Border {
 	}
 
 	drawMe () {
-		ctx.fillStyle = "#E12DE6"
+		ctx.fillStyle = "transparent"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
@@ -108,17 +112,22 @@ class FinishLine {
 		this.y = lineY;
 		this.width = lineWidth;
 		this.height = lineHeight;
-		this.isCrossed = 0
+		this.isCrossed = -1
 	}
 
 	drawMe () {
-		ctx.fillStyle = "#2DE675"
+		ctx.fillStyle = "#6CD4FF"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 
 		ctx.font = "bold 40px monospace";
-		ctx.fillStyle = "#2DE675";
-		ctx.fillText("lap counter " + this.isCrossed, 200, 100);
+		ctx.fillStyle = "#6CD4FF";
+		if (this.isCrossed >=0) {
+			ctx.fillText("lap counter " + this.isCrossed, 200, 100);
+		}
+		else {
+			ctx.fillText("Get ready", 200, 100);
+		}
 	}
 }
 
@@ -155,20 +164,47 @@ var track1 = [
 	new Border(150, 775, 40, 15),
 	new Border(180, 790, 40, 15),
 
+	// right curve outer
+	new Border(790, 280, 40, 15),
+	new Border(820, 290, 40, 15),
+	new Border(850, 300, 40, 15),
+	new Border(870, 310, 40, 15),
+	new Border(890, 325, 40, 15),
+	new Border(910, 340, 40, 15),
+	new Border(925, 355, 40, 15),
+	new Border(940, 370, 15, 30),
+	new Border(955, 400, 15, 30),
+	new Border(965, 430, 15, 30),
+	new Border(975, 460, 15, 160),
+	new Border(965, 620, 15, 30),
+	new Border(950, 650, 15, 30),
+	new Border(935, 680, 15, 30),
+	new Border(910, 710, 40, 15),
+	new Border(890, 725, 40, 15),
+	new Border(870, 740, 40, 15),
+	new Border(850, 755, 40, 15),
+	new Border(830, 770, 40, 15),
+	new Border(800, 780, 40, 25),
 
 	//straight bottom
 	new Border(300, 650, 400, 10),
 	new Border(200, 790, 600, 15),
 
+	//center isle
+	new Border(300, 430, 400, 220),
+	new Border(270, 435, 455, 210),
+	new Border(235, 440, 520, 190),
+	new Border(220, 460, 550, 160),
+	new Border(205, 480, 580, 120),
 	
 
 ];
 
-var finishLine0 = new FinishLine(300, 200, 10, 150);
+var finishLine0 = new FinishLine(600, 653, 10, 150);
 
 
 
-//check for keypress
+//check for keyPressed
 var keyPressed = false;
 
 
@@ -193,67 +229,7 @@ document.onkeyup = function (event) {
 
 // car movement
 
-document.onkeydown = function (event) {
 
-	if (!car.isCrashed) {
-		switch (event.keyCode) {
-			case 90: //z
-
-				accelerate();
-				keyPressed = true;
-				break;
-
-			case 83: //s
-				keyPressed = true;
-				
-				if (car.speed > 0) {
-					brake();
-				}
-				else if (car.speed <=0) {
-					goBackwards();
-				}
-				
-
-				break;
-
-			case 81: //q
-				car.rotation -= car.maniability;
-
-				if (car.rotation < 0) {
-					car.rotation += 360;
-				};
-
-				if (car.rotation === 360) {
-					car.rotation = 0;
-				};
-				console.log(car.rotation);
-				
-				break;
-
-			case 68: //d
-				
-				car.rotation += car.maniability;
-
-				if (car.rotation === 360) {
-					car.rotation = 0;
-				};
-				console.log(car.rotation);
-				break;
-
-
-			case 38: //uparrow
-				car.speed += 2;
-				console.log(car.speed);
-				break;
-
-			case 40: //downarrow
-				car.speed -= 2;
-				console.log(car.speed);
-				break;
-		};
-
-	}
-}
 
 //go forward depending on rotation
 function goForward () {
@@ -264,9 +240,9 @@ function goForward () {
 //go reverse
 
 function goBackwards () {
-	car.y += car.speed * Math.cos(car.rotate());	
-	car.x -= car.speed * Math.sin(car.rotate());
-
+	if (car.speed < car.maxSpeed) {
+		car.speed -= car.acceleration;
+	};
 }
 
 //acceleration
@@ -284,7 +260,11 @@ function decelerate () {
 		car.speed -= car.acceleration/6
 	};
 
-	if (car.speed > 0 && car.speed < 1) {
+	if (car.speed < 0) {
+		car.speed += car.acceleration/3
+	};
+
+	if (car.speed > -0.5 && car.speed < 0.5) {
 		car.speed = 0;
 	};
 }
@@ -309,12 +289,6 @@ function collision (car, border) {
 
 }
 
-
-
-
-
-
-
 //rudimentary game over screen
 
 var gameOver = {
@@ -335,7 +309,21 @@ var gameOver = {
 	}
 };
 
+//counting laps 
 
+function lap () {
+	if (buffer > 0 && endOfCross === true) {
+		setTimeout (function () {
+			finishLine0.isCrossed += 1;
+		}, 500);
+
+		buffer = 0;
+		endOfCross = false;
+	};
+}
+
+var endOfCross = false;
+var buffer = 0;
 
 //drawing elements on canvas
 
@@ -357,21 +345,6 @@ function drawingLoopGame () {
 	});
 };
 
-function lap () {
-	if (buffer > 0 && endOfCross === true) {
-		setTimeout (function () {
-			finishLine0.isCrossed += 1;
-		}, 500);
-
-		buffer = 0;
-		endOfCross = false;
-	};
-
-
-}
-
-var endOfCross = false;
-var buffer = 0;
 
 function drawEverything () {
 	
@@ -381,9 +354,12 @@ function drawEverything () {
 		border.drawMe();
 
 		if (collision(car, border)) {
-			car.y += car.speed * Math.cos(car.rotate())	
-			car.x -= car.speed * Math.sin(car.rotate())
-			car.speed = 0;
+			car.y += (car.speed+1) * Math.cos(car.rotate())	
+			car.x -= (car.speed+1) * Math.sin(car.rotate())
+
+			if (!collision(car, border)) {
+				car.speed = 0;
+			};
 		};
 	});
 
@@ -417,10 +393,6 @@ function drawEverything () {
 	}
 
 
-	if (car.isCrashed) {
-		gameOver.drawMe();
-	}
-
 	document.onkeydown = function (event) {
 
 	if (!car.isCrashed) {
@@ -437,10 +409,10 @@ function drawEverything () {
 				if (car.speed > 0) {
 					brake();
 				}
-				else if (car.speed <=0) {
+
+				else{
 					goBackwards();
 				}
-				
 
 				break;
 
