@@ -15,8 +15,8 @@ var car = {
 	speed: 0,
 	acceleration: 0.5,
 	maxSpeed: 30,
-	brake: 1q,
-	maniability : 5,
+	brake: 1,
+	maniability : 7,
 	rotate: function (){
 		return this.rotation * Math.PI/180;
 	},
@@ -81,10 +81,27 @@ var finishLine0 = new FinishLine(300, 200, 10, 150);
 
 
 //check for keypress
+var keyPressed = false;
 
 
+document.onkeyup = function (event) {
+	switch(event.keyCode) {
+		case 90: 
 
+			keyPressed = false;
+			break;
 
+		case 83: 
+
+			keyPressed = false;
+			break;
+
+		default:
+
+			keyPressed = true;
+		break;
+	}	
+}
 
 // car movement
 
@@ -95,10 +112,11 @@ document.onkeydown = function (event) {
 			case 90: //z
 
 				accelerate();
-
+				keyPressed = true;
 				break;
 
 			case 83: //s
+				keyPressed = true;
 				
 				if (car.speed > 0) {
 					brake();
@@ -107,6 +125,7 @@ document.onkeydown = function (event) {
 					goBackwards();
 				}
 				
+
 				break;
 
 			case 81: //q
@@ -150,130 +169,75 @@ document.onkeydown = function (event) {
 
 //go forward depending on rotation
 function goForward () {
-	if (((car.rotation >= 315 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 45))){
-					
-		if ((car.rotation >= 355 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 5)) {
-			car.y -= car.speed;
-
-		}
-		else if (car.rotation >= 40 && car.rotation <= 50) {
-			car.y -= car.speed;
-			car.x += car.speed;
-		}
-		else if (car.rotation >= 310 && car.rotation <= 320) {
-			car.y -= car.speed;
-			car.x -= car.speed;
-		};
-
-	} 
-	else if (car.rotation >= 45 && car.rotation <= 135){
-		
-		if (car.rotation >= 85 && car.rotation <= 95) {
-			car.x += car.speed;
-		}
-
-		else if (car.rotation >= 40 && car.rotation <= 50) { //diagonal
-			car.y -= car.speed;
-			car.x += car.speed;
-		}
-
-		else if (car.rotation >= 130 && car.rotation <= 140) {
-			car.y += car.speed;
-			car.x += car.speed;
-		};
-	}
-	else if (car.rotation >= 135 && car.rotation <= 225) {
-		
-		if (car.rotation >= 175 && car.rotation <= 185) {
-			car.y += car.speed;
-		}
-		else if (car.rotation >= 130 && car.rotation <= 140) {
-			car.y += car.speed;
-			car.x += car.speed;
-		}
-		else if (car.rotation >= 220 && car.rotation <= 230) {
-			car.y += car.speed;
-			car.x -= car.speed;
-		};
-	}
-	else if (car.rotation >= 225 && car.rotation <= 315) {
-		
-		if (car.rotation >= 265 && car.rotation <= 275) {
-			car.x -= car.speed;
-		}
-		else if (car.rotation >= 220 && car.rotation <= 230) {
-			car.y += car.speed;
-			car.x -= car.speed;
-		}
-		else if (car.rotation >= 310 && car.rotation <= 320) {
-			car.y -= car.speed;
-			car.x -= car.speed;
-		};
-	};
+	car.y -= car.speed * Math.cos(car.rotate())	
+	car.x += car.speed * Math.sin(car.rotate())
 }
 	
 //go reverse
 
 function goBackwards () {
-	if (((car.rotation >= 315 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 45))){
+	car.y += car.speed * Math.cos(car.rotate())	
+	car.x -= car.speed * Math.sin(car.rotate())
+
+	// if (((car.rotation >= 315 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 45))){
 					
-		if ((car.rotation >= 355 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 5)) {
-			car.y += car.speed/2;
-		}
-		else if (car.rotation >= 40 && car.rotation <= 50) {
-			car.y += car.speed/2;
-			car.x -= car.speed/2;
-		}
-		else if (car.rotation >= 310 && car.rotation <= 320) {
-			car.y += car.speed/2;
-			car.x += car.speed/2;
-		};
+	// 	if ((car.rotation >= 355 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 5)) {
+	// 		car.y += car.speed/2;
+	// 	}
+	// 	else if (car.rotation >= 40 && car.rotation <= 50) {
+	// 		car.y += car.speed/2;
+	// 		car.x -= car.speed/2;
+	// 	}
+	// 	else if (car.rotation >= 310 && car.rotation <= 320) {
+	// 		car.y += car.speed/2;
+	// 		car.x += car.speed/2;
+	// 	};
 
-	} 
-	else if (car.rotation >= 45 && car.rotation <= 135){
+	// } 
+	// else if (car.rotation >= 45 && car.rotation <= 135){
 		
-		if (car.rotation >= 85 && car.rotation <= 95) {
-			car.x -= car.speed/2;
-		}
+	// 	if (car.rotation >= 85 && car.rotation <= 95) {
+	// 		car.x -= car.speed/2;
+	// 	}
 
-		else if (car.rotation >= 40 && car.rotation <= 50) { //diagonal
-			car.y += car.speed/2;
-			car.x -= car.speed/2;
-		}
+	// 	else if (car.rotation >= 40 && car.rotation <= 50) { //diagonal
+	// 		car.y += car.speed/2;
+	// 		car.x -= car.speed/2;
+	// 	}
 
-		else if (car.rotation >= 130 && car.rotation <= 140) {
-			car.y -= car.speed/2;
-			car.x -= car.speed/2;
-		};
-	}
-	else if (car.rotation >= 135 && car.rotation <= 225) {
+	// 	else if (car.rotation >= 130 && car.rotation <= 140) {
+	// 		car.y -= car.speed/2;
+	// 		car.x -= car.speed/2;
+	// 	};
+	// }
+	// else if (car.rotation >= 135 && car.rotation <= 225) {
 		
-		if (car.rotation >= 175 && car.rotation <= 185) {
-			car.y -= car.speed/2;
-		}
-		else if (car.rotation >= 130 && car.rotation <= 140) {
-			car.y -= car.speed/2;
-			car.x -= car.speed/2;
-		}
-		else if (car.rotation >= 220 && car.rotation <= 230) {
-			car.y -= car.speed/2;
-			car.x += car.speed/2;
-		};
-	}
-	else if (car.rotation >= 225 && car.rotation <= 315) {
+	// 	if (car.rotation >= 175 && car.rotation <= 185) {
+	// 		car.y -= car.speed/2;
+	// 	}
+	// 	else if (car.rotation >= 130 && car.rotation <= 140) {
+	// 		car.y -= car.speed/2;
+	// 		car.x -= car.speed/2;
+	// 	}
+	// 	else if (car.rotation >= 220 && car.rotation <= 230) {
+	// 		car.y -= car.speed/2;
+	// 		car.x += car.speed/2;
+	// 	};
+	// }
+	// else if (car.rotation >= 225 && car.rotation <= 315) {
 		
-		if (car.rotation >= 265 && car.rotation <= 275) {
-			car.x += car.speed/2;
-		}
-		else if (car.rotation >= 220 && car.rotation <= 230) {
-			car.y -= car.speed/2;
-			car.x += car.speed/2;
-		}
-		else if (car.rotation >= 310 && car.rotation <= 320) {
-			car.y += car.speed/2;
-			car.x += car.speed/2;
-		};
-	};
+	// 	if (car.rotation >= 265 && car.rotation <= 275) {
+	// 		car.x += car.speed/2;
+	// 	}
+	// 	else if (car.rotation >= 220 && car.rotation <= 230) {
+	// 		car.y -= car.speed/2;
+	// 		car.x += car.speed/2;
+	// 	}
+	// 	else if (car.rotation >= 310 && car.rotation <= 320) {
+	// 		car.y += car.speed/2;
+	// 		car.x += car.speed/2;
+	// 	};
+	// };
 }
 
 //acceleration
@@ -288,7 +252,7 @@ function accelerate () {
 
 function decelerate () {
 	if (car.speed > 0) {
-		car.speed -= car.acceleation/2
+		car.speed -= car.acceleration/4
 	};
 }
 
@@ -388,6 +352,11 @@ function drawEverything () {
 	ctx.restore();
 
 	goForward();
+
+	if (keyPressed === false) {
+		decelerate();
+	}
+
 
 	if (car.isCrashed) {
 		gameOver.drawMe();
