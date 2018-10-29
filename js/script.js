@@ -2,6 +2,62 @@ var canvas = document.querySelector(".game");
 
 var ctx = canvas.getContext("2d");
 
+//-------------------STRART SCREEN-------------------
+
+var startscreenImg = new Image();
+startscreenImg.src = "./images/titlescreen.png";
+
+var startCounter = 0;
+var pressedStart = false;
+
+drawingLoopStart();
+
+function drawingLoopStart () {
+	ctx.clearRect(0, 0, 1000, 1000);
+
+	ctx.drawImage(startscreenImg, 0, 0, 1000, 1000);
+
+	if (startCounter <= 60){
+		ctx.fillStyle = "white";
+		ctx.font = "bold 60px SolidSans"
+		ctx.fillText("PRESS ANY KEY", 300, 850);
+	};
+
+	if (startCounter > 60){
+		ctx.fillStyle = "transparent";
+		ctx.font = "bold 60px SolidSans"
+		ctx.fillText("PRESS ANY KEY", 300, 850);
+	};
+
+	if (startCounter === 120) {
+		startCounter = 0;
+	};
+
+	startCounter ++;
+	
+	document.onkeydown = function () {
+		pressedStart = true;
+		console.log("pressed start");
+	};
+
+	requestAnimationFrame(function () {
+		if (pressedStart === false) {
+			drawingLoopStart();
+		} 
+
+		else if (pressedStart) {
+			drawingLoopGame();
+
+		}
+	});
+};
+
+
+
+
+
+//-----------------------game screen-----------------
+
 var carImg = new Image();
 carImg.src = "./images/car1.png";
 
@@ -66,13 +122,45 @@ class FinishLine {
 	}
 }
 
+var track1Background = new Image();
+track1Background.src = "./images/track1.png";
+
+var track1 = [
+	//straight top
+	new Border(200, 270, 600, 15),
+	new Border(300, 415, 400, 15),
+
+	//curve left outer
+	new Border(180, 280, 40, 15),
+	new Border(150, 290, 40, 15),
+	new Border(120, 300, 40, 15),
+	new Border(100, 310, 40, 15),
+	new Border(80, 325, 40, 15),
+	new Border(60, 340, 40, 15),
+	new Border(45, 355, 40, 15),
+	new Border(45, 370, 15, 30),
+	new Border(35, 400, 15, 30),
+	new Border(25, 430, 15, 30),
+	new Border(15, 460, 15, 30),
+	new Border(5, 490, 20, 90),
+	new Border(15, 580, 15, 30),
+	new Border(25, 610, 15, 30),
+	new Border(35, 640, 15, 30),
+	new Border(45, 670, 15, 30),
+	new Border(45, 700, 40, 15),
+	new Border(60, 715, 40, 15),
+	new Border(80, 730, 40, 15),
+	new Border(100, 745, 40, 15),
+	new Border(120, 760, 40, 15),
+	new Border(150, 775, 40, 15),
+	new Border(180, 790, 40, 15),
 
 
-var track0 = [
-	new Border(200, 200, 600, 10),
-	new Border(200, 350, 450, 10),
-	new Border(800, 200, 10, 600),
-	new Border(650, 350, 10, 450),
+	//straight bottom
+	new Border(300, 650, 400, 10),
+	new Border(200, 790, 600, 15),
+
+	
 
 ];
 
@@ -98,7 +186,7 @@ document.onkeyup = function (event) {
 
 		default:
 
-			keyPressed = true;
+			
 		break;
 	}	
 }
@@ -169,75 +257,16 @@ document.onkeydown = function (event) {
 
 //go forward depending on rotation
 function goForward () {
-	car.y -= car.speed * Math.cos(car.rotate())	
-	car.x += car.speed * Math.sin(car.rotate())
+	car.y -= car.speed * Math.cos(car.rotate());	
+	car.x += car.speed * Math.sin(car.rotate());
 }
 	
 //go reverse
 
 function goBackwards () {
-	car.y += car.speed * Math.cos(car.rotate())	
-	car.x -= car.speed * Math.sin(car.rotate())
+	car.y += car.speed * Math.cos(car.rotate());	
+	car.x -= car.speed * Math.sin(car.rotate());
 
-	// if (((car.rotation >= 315 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 45))){
-					
-	// 	if ((car.rotation >= 355 && car.rotation <= 359) || (car.rotation >= 0 && car.rotation <= 5)) {
-	// 		car.y += car.speed/2;
-	// 	}
-	// 	else if (car.rotation >= 40 && car.rotation <= 50) {
-	// 		car.y += car.speed/2;
-	// 		car.x -= car.speed/2;
-	// 	}
-	// 	else if (car.rotation >= 310 && car.rotation <= 320) {
-	// 		car.y += car.speed/2;
-	// 		car.x += car.speed/2;
-	// 	};
-
-	// } 
-	// else if (car.rotation >= 45 && car.rotation <= 135){
-		
-	// 	if (car.rotation >= 85 && car.rotation <= 95) {
-	// 		car.x -= car.speed/2;
-	// 	}
-
-	// 	else if (car.rotation >= 40 && car.rotation <= 50) { //diagonal
-	// 		car.y += car.speed/2;
-	// 		car.x -= car.speed/2;
-	// 	}
-
-	// 	else if (car.rotation >= 130 && car.rotation <= 140) {
-	// 		car.y -= car.speed/2;
-	// 		car.x -= car.speed/2;
-	// 	};
-	// }
-	// else if (car.rotation >= 135 && car.rotation <= 225) {
-		
-	// 	if (car.rotation >= 175 && car.rotation <= 185) {
-	// 		car.y -= car.speed/2;
-	// 	}
-	// 	else if (car.rotation >= 130 && car.rotation <= 140) {
-	// 		car.y -= car.speed/2;
-	// 		car.x -= car.speed/2;
-	// 	}
-	// 	else if (car.rotation >= 220 && car.rotation <= 230) {
-	// 		car.y -= car.speed/2;
-	// 		car.x += car.speed/2;
-	// 	};
-	// }
-	// else if (car.rotation >= 225 && car.rotation <= 315) {
-		
-	// 	if (car.rotation >= 265 && car.rotation <= 275) {
-	// 		car.x += car.speed/2;
-	// 	}
-	// 	else if (car.rotation >= 220 && car.rotation <= 230) {
-	// 		car.y -= car.speed/2;
-	// 		car.x += car.speed/2;
-	// 	}
-	// 	else if (car.rotation >= 310 && car.rotation <= 320) {
-	// 		car.y += car.speed/2;
-	// 		car.x += car.speed/2;
-	// 	};
-	// };
 }
 
 //acceleration
@@ -252,7 +281,11 @@ function accelerate () {
 
 function decelerate () {
 	if (car.speed > 0) {
-		car.speed -= car.acceleration/4
+		car.speed -= car.acceleration/6
+	};
+
+	if (car.speed > 0 && car.speed < 1) {
+		car.speed = 0;
 	};
 }
 
@@ -306,9 +339,9 @@ var gameOver = {
 
 //drawing elements on canvas
 
-drawingLoop();
 
-function drawingLoop () {
+function drawingLoopGame () {
+
 
 	ctx.clearRect(0, 0, 1000, 1000)
 	
@@ -320,29 +353,55 @@ function drawingLoop () {
 
 	requestAnimationFrame(function () {
 
-		drawingLoop();
+		drawingLoopGame();
 	});
 };
 
+function lap () {
+	if (buffer > 0 && endOfCross === true) {
+		setTimeout (function () {
+			finishLine0.isCrossed += 1;
+		}, 500);
+
+		buffer = 0;
+		endOfCross = false;
+	};
+
+
+}
+
+var endOfCross = false;
+var buffer = 0;
 
 function drawEverything () {
 	
-	track0.forEach(function (border) {
+
+	ctx.drawImage(track1Background, 0, 0, 1000, 1000);
+	track1.forEach(function (border) {
 		border.drawMe();
 
 		if (collision(car, border)) {
-			car.isCrashed = true;
+			car.y += car.speed * Math.cos(car.rotate())	
+			car.x -= car.speed * Math.sin(car.rotate())
+			car.speed = 0;
 		};
 	});
 
 	finishLine0.drawMe();
 
 	if (collision(car, finishLine0)) {
-		
+		buffer ++;
+		endOfCross = false;
 
-		finishLine0.isCrossed ++;
+
+		
 	};
+
+	if (!collision(car, finishLine0) && buffer >0) {
+		endOfCross = true;
+	}
 	
+	lap();
 
 	//draw car
 	ctx.save();
@@ -361,6 +420,68 @@ function drawEverything () {
 	if (car.isCrashed) {
 		gameOver.drawMe();
 	}
+
+	document.onkeydown = function (event) {
+
+	if (!car.isCrashed) {
+		switch (event.keyCode) {
+			case 90: //z
+
+				accelerate();
+				keyPressed = true;
+				break;
+
+			case 83: //s
+				keyPressed = true;
+				
+				if (car.speed > 0) {
+					brake();
+				}
+				else if (car.speed <=0) {
+					goBackwards();
+				}
+				
+
+				break;
+
+			case 81: //q
+				car.rotation -= car.maniability;
+
+				if (car.rotation < 0) {
+					car.rotation += 360;
+				};
+
+				if (car.rotation === 360) {
+					car.rotation = 0;
+				};
+				console.log(car.rotation);
+				
+				break;
+
+			case 68: //d
+				
+				car.rotation += car.maniability;
+
+				if (car.rotation === 360) {
+					car.rotation = 0;
+				};
+				console.log(car.rotation);
+				break;
+
+
+			case 38: //uparrow
+				car.speed += 2;
+				console.log(car.speed);
+				break;
+
+			case 40: //downarrow
+				car.speed -= 2;
+				console.log(car.speed);
+				break;
+		};
+
+	}
+}
 
 
 
