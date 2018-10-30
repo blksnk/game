@@ -138,7 +138,7 @@ class Border {
 	}
 
 	drawMe () {
-		ctx.fillStyle = "red"
+		ctx.fillStyle = "transparent"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
@@ -158,7 +158,7 @@ class FinishLine {
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 
-		ctx.font = "bold 40px monospace";
+		ctx.font = "bold 40px SolidSans";
 		ctx.fillStyle = "#6CD4FF";
 		if (this.isCrossed >=0) {
 			ctx.fillText("lap counter " + this.isCrossed, 200, 100);
@@ -409,7 +409,7 @@ var gameOver = {
 	drawMe: function () {
 		this.opacity += 0.01;
 		ctx.globalAlpha = this.opacity;
-		ctx.font = "bold 70px monospace";
+		ctx.font = "bold 70px SolidSans";
 
 		ctx.fillStyle = "#00CEBF";
 		ctx.fillText("Game Over", 400, 500);
@@ -459,7 +459,7 @@ function timer () {
 		seconds = 0;
 	}
 
-	ctx.font = "bold 40px monospace";
+	ctx.font = "bold 40px SoldSans";
 	ctx.fillStyle = "#6CD4FF";
 	ctx.fillText( minutes + " : " + seconds + " : " + dseconds, 400, 900)
 }
