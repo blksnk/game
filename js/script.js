@@ -63,7 +63,7 @@ function drawStartScreen () {
 var background = new Image();
 background.src = "./images/track-background-waves.png";
 
-var backgroundWaves1 = {
+var backgroundWaves2 = {
 	x: -1000,
 	y: 0,
 	width: 1000,
@@ -73,7 +73,7 @@ var backgroundWaves1 = {
 		ctx.drawImage(background, this.x, this.y, this.width, this.height);
 	}
 };
-var backgroundWaves2 = {
+var backgroundWaves1 = {
 	x: 0,
 	y: 0,
 	width: 1000,
@@ -85,13 +85,16 @@ var backgroundWaves2 = {
 };
 
 function movingBackground (image1, image2) {
+	image1.drawMe();
+	image2.drawMe();
+
 	image1.x +=2;
 	image2.x +=2;
 
-	if(image1.x > 1000 + image1.width) {
-		image1.x = 0
+	if(image1.x === 1000) {
+		image1.x = -1000
 	};
-	if(image2.x > 1000 + image2.width) {
+	if(image2.x === 1000) {
 		image2.x = -1000;
 	};
 }
@@ -158,13 +161,17 @@ class FinishLine {
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 
+		//bottom bar
+		ctx.fillStyle = "#B3C3E8";
+		ctx.fillRect(100, 880, 800, 120);
+
 		ctx.font = "bold 40px SolidSans";
-		ctx.fillStyle = "#6CD4FF";
+		ctx.fillStyle = "#4E4E4E";
 		if (this.isCrossed >=0) {
-			ctx.fillText("lap counter " + this.isCrossed, 200, 100);
+			ctx.fillText("lap counter " + this.isCrossed, 200, 950);
 		}
 		else {
-			ctx.fillText("Get ready", 200, 100);
+			ctx.fillText("Get ready", 200, 950);
 		}
 	}
 }
@@ -459,9 +466,9 @@ function timer () {
 		seconds = 0;
 	}
 
-	ctx.font = "bold 40px SoldSans";
-	ctx.fillStyle = "#6CD4FF";
-	ctx.fillText( minutes + " : " + seconds + " : " + dseconds, 400, 900)
+	ctx.font = "bold 40px SolidSans";
+	ctx.fillStyle = "#4E4E4E";
+	ctx.fillText( "Time: " + minutes + " : " + seconds + " : " + dseconds, 550, 950)
 }
 
 //---------------level completion------------
