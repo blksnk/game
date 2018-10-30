@@ -68,8 +68,8 @@ carImg.src = "./images/car1.png";
 var car = {
 	x: 500,
 	y: 680,
-	width: 57,
-	height: 81,
+	width: 34,
+	height: 58,
 	isCrashed: false,
 	rotation: 90,
 	speed: 0,
@@ -90,6 +90,7 @@ var car = {
 	}
 };
 
+
 class Border {
 	constructor (borderX, borderY, borderWidth, borderHeight) {
 		this.x = borderX;
@@ -100,7 +101,7 @@ class Border {
 	}
 
 	drawMe () {
-		ctx.fillStyle = "transparent"
+		ctx.fillStyle = "#BC2323"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
@@ -116,7 +117,7 @@ class FinishLine {
 	}
 
 	drawMe () {
-		ctx.fillStyle = "#6CD4FF"
+		ctx.fillStyle = "#6152D3"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 
@@ -200,7 +201,7 @@ var track1 = [
 
 ];
 
-var finishLine0 = new FinishLine(600, 653, 10, 150);
+var finishLine0 = new FinishLine(600, 660, 10, 129);
 
 
 
@@ -289,6 +290,14 @@ function collision (car, border) {
 
 }
 
+//more advanced try at collision detection;
+
+function willItWork (car) {
+
+}
+
+
+
 //rudimentary game over screen
 
 var gameOver = {
@@ -325,6 +334,41 @@ function lap () {
 var endOfCross = false;
 var buffer = 0;
 
+//----------------------timer----------------------
+
+//using drawing loop
+
+var frame = 0;
+var dseconds = 0;
+var seconds = 0;
+var minutes = 0;
+
+function timer () {
+	//tenth of a second
+	if (frame % 6 === 0) { 
+		dseconds++;
+	}
+
+	//second
+	if (frame % 60 === 0) {
+		seconds++;
+		dseconds = 0;
+	}
+
+	//minute
+	if (frame % 3600 === 0) {
+		minutes++;
+		seconds = 0;
+	}
+
+	ctx.font = "bold 40px monospace";
+	ctx.fillStyle = "#6CD4FF";
+	ctx.fillText( minutes + " : " + seconds + " : " + dseconds, 400, 900)
+}
+
+
+//-------------------------------------------------------------------
+
 //drawing elements on canvas
 
 
@@ -346,6 +390,8 @@ function drawingLoopGame () {
 };
 
 
+
+
 function drawEverything () {
 	
 
@@ -365,27 +411,33 @@ function drawEverything () {
 
 	finishLine0.drawMe();
 
+
+	//----------------lap count-----------
 	if (collision(car, finishLine0)) {
 		buffer ++;
 		endOfCross = false;
-
-
-		
 	};
 
 	if (!collision(car, finishLine0) && buffer >0) {
 		endOfCross = true;
 	}
-	
 	lap();
 
-	//draw car
+	//----------timer------------------
+
+	frame++;
+	timer()
+
+
+	//-------------draw car----------------
 	ctx.save();
 
 	car.drawMe();
 
 	ctx.restore();
 
+
+	//------------acceleration & deceleration----------
 	goForward();
 
 	if (keyPressed === false) {
@@ -393,6 +445,7 @@ function drawEverything () {
 	}
 
 
+	//--------------movement system----------------
 	document.onkeydown = function (event) {
 
 	if (!car.isCrashed) {
@@ -442,13 +495,23 @@ function drawEverything () {
 
 
 			case 38: //uparrow
-				car.speed += 2;
-				console.log(car.speed);
+				car.y -= 1;
+				console.log("car Y = " + car.y);
 				break;
 
 			case 40: //downarrow
-				car.speed -= 2;
-				console.log(car.speed);
+				car.y += 1;
+				console.log("car Y = " + car.y);
+				break;
+
+			case 37: //left arrow
+				car.x -=1;
+				console.log("car X = " + car.x);
+				break;
+
+			case 39: //right arrow
+				car.x +=1;
+				console.log("car X = " + car.x);
 				break;
 		};
 
