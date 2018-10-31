@@ -12,14 +12,13 @@ var pressedStart = false;
 
 drawStartScreen();
 
+//-------------------------start screen--------------
 function drawStartScreen () {
 	ctx.clearRect(0, 0, 1000, 1000);
 
 	ctx.drawImage(startscreenImg, 0, 0, 1000, 1000);
 
-
-
-//-------------------------start screen--------------
+	pressedStart = false;
 
 	if (startCounter <= 30){
 		ctx.fillStyle = "white";
@@ -141,7 +140,7 @@ class Border {
 	}
 
 	drawMe () {
-		ctx.fillStyle = "#C83A3A"
+		ctx.fillStyle = "transparent"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
@@ -339,6 +338,32 @@ var track4 = [
 
 var finishLine4 = new FinishLine(300, 440, 10, 140);
 
+//----------------------LEVEL 5--------------------
+
+var track5Background = new Image();
+track5Background.src = "./images/track-5-outline.png";
+
+var track5 = [
+	new Border(0, 55, 1000, 15),
+	new Border(55, 0, 15, 1000),
+	new Border(935, 0, 15, 1000),
+	new Border(0, 850, 1000, 15),
+	new Border(195, 220, 20, 465),
+	new Border(350, 0, 20, 445),
+	new Border(370, 450, 145, 5),
+	new Border(655, 450, 130, 5),
+	new Border(195, 580, 320, 15),
+	new Border(220, 712, 520, 5),
+	new Border(500, 580, 15, 135),
+	new Border(675, 580, 270, 5),
+	new Border(675, 320, 270, 5),
+	new Border(520, 192, 260, 5),
+	new Border(515, 192, 5, 530),
+	new Border(655, 330, 5, 230),
+];
+
+var finishLine5 = new FinishLine(400, 710, 10, 140);
+
 //---------------check for keyPressed-------------
 var keyPressed = false;
 document.onkeyup = function (event) {
@@ -384,10 +409,10 @@ function brake () {
 //--------------deceleration---------------------
 function decelerate () {
 	if (car.speed > 0) {
-		car.speed -= car.acceleration/6
+		car.speed -= car.acceleration/8
 	};
 	if (car.speed < 0) {
-		car.speed += car.acceleration/3
+		car.speed += car.acceleration/6
 	};
 	if (car.speed > -0.5 && car.speed < 0.5) {
 		car.speed = 0;
@@ -468,29 +493,15 @@ function movementSystem () {
 					car.x +=1;
 					console.log("car X = " + car.x);
 					break;
+
+				case 82: //r
+					retryCount = true;
+					retry();
 			};
 		};
 	};
 };
 
-//---------------game over screen-----------
-var gameOver = {
-	opacity: 0,
-	drawMe: function () {
-		this.opacity += 0.01;
-		ctx.globalAlpha = this.opacity;
-		ctx.font = "bold 70px SolidSans";
-
-		ctx.fillStyle = "#00CEBF";
-		ctx.fillText("Game Over", 400, 500);
-
-		ctx.lineWidth = 3;
-		ctx.strokeStyle = "#C031BB";
-		ctx.strokeText("Game Over", 400, 500);
-
-		ctx.globalAlpha = 1;
-	}
-};
 
 //-------------counting laps------------- 
 function lap (finishLine) {
@@ -548,7 +559,7 @@ var level5completed = false;
 //drawing elements on canvas
 
 function drawingLoopGame () {
-
+	
 
 	ctx.clearRect(0, 0, 1000, 1000)
 
@@ -564,13 +575,20 @@ function drawingLoopGame () {
 	movementSystem();
 	requestAnimationFrame(function () {
 
-		drawingLoopGame();
+		if (!retryCount) {
+			drawingLoopGame();	
+		}
 	});
 };
-		var reset = 0
+
+var reset = 0
+var carCounter = 0;
 
 //level switcher
 function levelSwitcher () {
+
+	
+
 	if (!level1completed) {
 		drawLevel1();
 	}
@@ -617,11 +635,105 @@ function levelSwitcher () {
 
 		drawLevel4();
 	}
+	else if (level4completed && !level5completed) {
+		if (reset === 3) {
+			car.speed = 0;
+			minutes = 0;
+			dseconds = 0;
+			seconds = 0;
+			carCounter = 0;
+			frame = 0;
+			
+			reset ++;
+		};
+
+		drawLevel5();
+	}
+
+	else if (level1completed && level2completed && level3completed && level4completed && level5completed) {
+		if (reset === 4) {
+			car.speed = 0;
+			minutes = 0;
+			dseconds = 0;
+			seconds = 0;
+			carCounter = 0;
+			frame = 0;
+			
+			reset ++;
+		};
+		drawWinScreen();
+	}
 		
 }
 
+//---------------game over screen-----------
+var gameOver = {
+	
+	drawMe: function () {
+		
 
-var carCounter = 0;
+		ctx.fillStyle = "white"
+		ctx.fillRect(200, 400, 600, 200);
+
+		
+		ctx.font = "70px SolidSans";
+		ctx.fillStyle = "#4E4E4E";
+		ctx.fillText("Game Over", 340, 490);
+
+		ctx.font = "40px SolidSans";
+		ctx.fillStyle = "#BAE6E6";
+		ctx.fillText('Press "R" key to retry', 285, 540);
+	}
+};
+
+function drawWinScreen () {
+	ctx.fillStyle = "white";
+	ctx.fillRect(200, 375, 600, 300);
+
+	ctx.font = "70px SolidSans";
+	ctx.fillStyle = "#4E4E4E";
+	ctx.fillText("Well done!", 340, 450);
+
+	ctx.font = "70px SolidSans";
+	ctx.fillStyle = "#BAE6E4";
+	ctx.fillText("You won the game!", 210, 530);
+
+	ctx.font = "40px SolidSans";
+	ctx.fillStyle = "#BAF";
+	ctx.fillText('Press "R" key to retry', 275, 600);
+
+	retry();
+};
+
+var retryCount = false
+
+function retry () {
+	if (retryCount) {
+		pressedStart = false;
+		startCounter = 0;
+
+		drawStartScreen();
+
+		reset = 0;
+
+		car.speed = 0;
+		minutes = 0;
+		dseconds = 0;
+		seconds = 0;
+		carCounter = 0;
+		frame = 0;
+
+		level1completed = false;
+		level2completed = false;
+		level3completed = false;
+		level4completed = false;
+		level5completed = false;	
+
+		retryCount = false;
+	}
+};
+
+
 
 
 //---------------------LEVEL 1------------------
@@ -693,7 +805,6 @@ function drawLevel1 () {
 		car.speed = 0;
 	};
 
-	level1completed = true;
 
 };
 
@@ -774,7 +885,7 @@ function drawLevel2 () {
 		level2completed = true;
 	};
 
-	level2completed = true;
+	
 };
 
 
@@ -859,7 +970,7 @@ function drawLevel3 () {
 		level3completed = true;
 	};
 
-	level3completed = true;
+
 };
 
 function drawLevel4 () {
@@ -926,4 +1037,85 @@ function drawLevel4 () {
 	if (finishLine4.isCrossed === track4laps && minutes <= track4minutes) {
 		level4completed = true;
 	};
+
+};
+
+function drawLevel5 () {
+
+	ctx.drawImage(track5Background, 0, 0, 1000, 1000);
+	track5.forEach(function (border) {
+		border.drawMe();
+
+		if (collision(car, border)) {
+			car.y += (car.speed) * Math.cos(car.rotate())	
+			car.x -= (car.speed) * Math.sin(car.rotate())
+
+			if (!collision(car, border)) {
+				car.speed = 0;
+			};
+		};
+	});
+
+	finishLine5.drawMe(track5laps);
+
+	//----------------lap count-----------
+	if (collision(car, finishLine5)) {
+		buffer ++;
+		endOfCross = false;
+	};
+	if (!collision(car, finishLine5) && buffer >0) {
+		endOfCross = true;
+	}
+	lap(finishLine5);
+
+	//----------timer------------------
+	//starting timer atfer lap started
+	if (finishLine5.isCrossed >= 0) {
+		frame++;
+		timer()
+	};
+
+	//-------------draw car----------------
+	//set starting position and rotation
+	if (carCounter === 0) {
+		car.x = 250;
+		car.y = 750;
+		car.rotation = 90;
+		carCounter++;
+	};
+
+	ctx.save();
+	car.drawMe();
+	ctx.restore();
+
+	//--------------teleportation------------------
+
+	if ((car.y > 456 && car.y < 521) && (car.x > 660 && car.x < 700)) {
+		car.x -= 240;
+	};
+
+	if ((car.y > 327 && car.y < 395) && (car.x > 470 && car.x < 490)) {
+		car.x += 210;
+		car.rotation = 90;
+	};
+
+
+	//------------acceleration & deceleration----------
+	movementSystem()
+	goForward();
+
+	if (keyPressed === false) {
+		decelerate();
+	};
+
+	//-----------set winning parameters----------------
+	var track5laps = 3;
+	var track5minutes = 3;
+
+	//------------if completed---------------
+	if (finishLine5.isCrossed === track5laps && minutes <= track5minutes) {
+		level5completed = true;
+	};
+
+
 };
