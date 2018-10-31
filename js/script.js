@@ -141,7 +141,7 @@ class Border {
 	}
 
 	drawMe () {
-		ctx.fillStyle = "transparent"
+		ctx.fillStyle = "#C83A3A"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
@@ -158,12 +158,13 @@ class FinishLine {
 
 	drawMe () {
 		ctx.fillStyle = "#6152D3"
+		
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 
 		//bottom bar
 		ctx.fillStyle = "#B3C3E8";
-		ctx.fillRect(100, 880, 800, 120);
+		ctx.fillRect(150, 880, 700, 120);
 
 		ctx.font = "bold 40px SolidSans";
 		ctx.fillStyle = "#4E4E4E";
@@ -284,14 +285,62 @@ var track2 = [
 	new Border(90, 605, 20, 15),
 	new Border(110, 580, 10, 25),
 	new Border(110, 580, 10, 25),
-
 ];
 
 var finishLine2 = new FinishLine(500, 20, 10, 140)
 
+//-----------------LEVEL 3-----------------
+
+var track3Background = new Image();
+track3Background.src = "./images/track-3-outline.png"
+
+var track3 = [
+	new Border(0, 145, 750, 15),
+	new Border(0, 290, 1000, 15),
+	new Border(0, 365, 1000, 15),
+	new Border(190, 505, 810, 15),
+	new Border(150, 650, 850, 15),
+	new Border(150, 790, 850, 15),
+
+	new Border(0, 350, 15, 315),
+	new Border(0, 790, 15, 210), 
+	new Border(145, 790, 15, 210),
+	new Border(935, 0, 15, 315),
+	new Border(795, 0, 15, 120),
+	new Border(145, 540, 15, 120),
+
+	new Border(160, 525, 15, 15),
+	new Border(175, 510, 15, 15),
+	new Border(750, 130, 30, 15),
+	new Border(780, 115, 15, 15),
+];
+
+var finishLine3 = new FinishLine(350, 660, 10, 140);
+
+//--------------------LEVEL 4--------------------
+
+var track4Background = new Image();
+track4Background.src = "./images/track-4-outline.png";
+
+var track4 = [
+	new Border(0, 145, 1000, 15),
+	new Border(0, 790, 1000, 15),
+	new Border(0, 0, 15, 1000),
+	new Border(945, 0, 15, 1000),
+	new Border(0, 430, 430, 15),
+	new Border(590, 580, 430, 15),
+	new Border(430, 0, 15, 440),
+	new Border(580, 580, 15, 440),
+	new Border(585, 300, 215, 100),
+	new Border(585, 300, 170, 140),
+	new Border(170, 585, 270, 50),
+	new Border(190, 605, 250, 50),
+];
+
+var finishLine4 = new FinishLine(300, 440, 10, 140);
+
 //---------------check for keyPressed-------------
 var keyPressed = false;
-
 document.onkeyup = function (event) {
 	switch(event.keyCode) {
 		case 90: 
@@ -345,7 +394,6 @@ function decelerate () {
 	};
 };
 
-
 //--------------collision detection-----------
 function collision (car, border) {
 	return car.y + car.height >= border.y
@@ -370,10 +418,18 @@ function movementSystem () {
 					}
 					else{
 						goBackwards();
+						console.log(car.speed);
 					}
 					break;
 				case 81: //q
-					car.rotation -= car.maniability;
+					if (car.speed >= 0) {
+						car.rotation -= car.maniability;
+					}
+
+					else if (car.speed < 0) {
+						car.rotation += car.maniability;
+					}
+
 					if (car.rotation < 0) {
 						car.rotation += 360;
 					};
@@ -382,8 +438,15 @@ function movementSystem () {
 					};
 					console.log(car.rotation);		
 					break;
-				case 68: //d			
-					car.rotation += car.maniability;
+				case 68: //d
+					if (car.speed >= 0) {
+						car.rotation += car.maniability;
+					}
+
+					else if (car.speed < 0) {
+						car.rotation -= car.maniability;
+					}
+
 					if (car.rotation === 360) {
 						car.rotation = 0;
 					};
@@ -475,7 +538,9 @@ function timer () {
 
 var level1completed = false;
 var level2completed = false;
-
+var level3completed = false;
+var level4completed = false;
+var level5completed = false;
 
 
 //-------------------------------------------------------------------
@@ -487,7 +552,8 @@ function drawingLoopGame () {
 
 	ctx.clearRect(0, 0, 1000, 1000)
 
-	
+	movingBackground(backgroundWaves1, backgroundWaves2);
+
 	ctx.lineWidth = 8;
 	ctx.strokeStyle = "#000000";
 	ctx.strokeRect(0, 0, 1000, 1000);
@@ -509,34 +575,58 @@ function levelSwitcher () {
 		drawLevel1();
 	}
 	else if (level1completed && !level2completed) {
-		
-		//reset variables ONCE
-
 		if (reset === 0) {
 			car.speed = 0;
 			minutes = 0;
 			dseconds = 0;
 			seconds = 0;
 			carCounter = 0;
+			frame = 0;
 			
 			reset ++;
 		};
 
-		//draw level 2
-		
 		drawLevel2();
 		
-	};
+	}
+	else if (level2completed && !level3completed) {
+		if (reset === 1) {
+			car.speed = 0;
+			minutes = 0;
+			dseconds = 0;
+			seconds = 0;
+			carCounter = 0;
+			frame = 0;
+			
+			reset ++;
+		};
 
-};
+		drawLevel3();
+	}
+	else if (level3completed && !level4completed) {
+		if (reset === 2) {
+			car.speed = 0;
+			minutes = 0;
+			dseconds = 0;
+			seconds = 0;
+			carCounter = 0;
+			frame = 0;
+			
+			reset ++;
+		};
+
+		drawLevel4();
+	}
+		
+}
+
 
 var carCounter = 0;
 
 
 //---------------------LEVEL 1------------------
 function drawLevel1 () {
-
-	movingBackground(backgroundWaves1, backgroundWaves2);
+	
 	ctx.drawImage(track1Background, 0, 0, 1000, 1000);
 	track1.forEach(function (border) {
 		border.drawMe();
@@ -550,14 +640,14 @@ function drawLevel1 () {
 			};
 		};
 	});
-	finishLine1.drawMe();
+	finishLine1.drawMe(track1laps);
 
 	//----------------lap count-----------
 	if (collision(car, finishLine1)) {
 		buffer ++;
 		endOfCross = false;
 	};
-	if (!collision(car, finishLine1) && buffer >0) {
+	if (!collision(car, finishLine1) && buffer > 0) {
 		endOfCross = true;
 	}
 	lap(finishLine1);
@@ -579,44 +669,38 @@ function drawLevel1 () {
 	};
 
 	ctx.save();
-
 	car.drawMe();
-
 	ctx.restore();
-
 
 	//------------acceleration & deceleration----------
 	movementSystem();
-
 	goForward();
 
 	if (keyPressed === false) {
 		decelerate();
-	}
-
+	};
 
 	//set winning parameters
-
-	var track1laps = 6;
+	var track1laps = 3;
 	var track1minutes = 1;
+
 	// if completed
-	
 	if (finishLine1.isCrossed === track1laps && minutes <= track1minutes) {
 		level1completed = true;
 	}
 	else if (minutes > track1minutes) {
 		gameOver.drawMe();
 		car.speed = 0;
-	}
+	};
 
-	// level1completed = true;
+	level1completed = true;
+
 };
 
 //---------------------LEVEL 2---------------
 
 function drawLevel2 () {
 
-	movingBackground(backgroundWaves1, backgroundWaves2);
 	ctx.drawImage(track2Background, 0, 0, 1000, 1000);
 	track2.forEach(function (border) {
 		border.drawMe();
@@ -631,7 +715,7 @@ function drawLevel2 () {
 		};
 	});
 
-	finishLine2.drawMe();
+	finishLine2.drawMe(track2laps);
 
 	//----------------lap count-----------
 	if (collision(car, finishLine2)) {
@@ -662,13 +746,10 @@ function drawLevel2 () {
 	};
 
 	ctx.save();
-
 	car.drawMe();
-
 	ctx.restore();
 
 	//------right to left teleportation-------
-
 	if (car.x > 1000) {
 		car.x = 0 - car.width;
 	};
@@ -677,10 +758,8 @@ function drawLevel2 () {
 		car.x = 1000;
 	};
 
-
 	//------------acceleration & deceleration----------
 	movementSystem()
-
 	goForward();
 
 	if (keyPressed === false) {
@@ -688,13 +767,14 @@ function drawLevel2 () {
 	};
 
 	//-----------set winning parameters----------------
-
 	var track2laps = 3;
 	var track2minutes = 1;
 	//------------if completed---------------
 	if (finishLine2.isCrossed === track2laps && minutes <= track2minutes) {
 		level2completed = true;
 	};
+
+	level2completed = true;
 };
 
 
@@ -716,7 +796,7 @@ function drawLevel3 () {
 		};
 	});
 
-	finishLine3.drawMe();
+	finishLine3.drawMe(track3laps);
 
 	//----------------lap count-----------
 	if (collision(car, finishLine3)) {
@@ -730,7 +810,6 @@ function drawLevel3 () {
 
 	//----------timer------------------
 	//starting timer atfer lap started
-
 	if (finishLine3.isCrossed >= 0) {
 		frame++;
 		timer()
@@ -738,34 +817,34 @@ function drawLevel3 () {
 
 	//-------------draw car----------------
 	//set starting position and rotation
-
 	if (carCounter === 0) {
-		car.x = 600;
-		car.y = 50;
+		car.x = 400;
+		car.y = 700;
 		car.rotation = 270;
 		carCounter++;
 	};
-
 	ctx.save();
-
 	car.drawMe();
-
 	ctx.restore();
 
-	//------right to left teleportation-------
-
-	if (car.x > 1000) {
-		car.x = 0 - car.width;
+	//--------------teleportation---------------
+	if (car.x + car.width < 0 && (car.y >600 && car.y < 800)) {
+		car.x = 1000 + car.width;
+		car.y -= 285; 
 	};
 
-	if (car.x + car.width < 0) {
-		car.x = 1000;
+	if (car.y - car.height > 1000 && (car.x > 0 && car.x < 200)) {
+		car.y = 0 - car.height;
+		car.x += 792;
 	};
 
+	if (car.x + car.width < 0 && (car.y > 180 && car.y < 240)) {
+		car.x = 1000 + car.width;
+		car.y += 495;
+	};
 
 	//------------acceleration & deceleration----------
 	movementSystem()
-
 	goForward();
 
 	if (keyPressed === false) {
@@ -773,13 +852,78 @@ function drawLevel3 () {
 	};
 
 	//-----------set winning parameters----------------
-
-	var track3laps = 6;
+	var track3laps = 4;
 	var track3minutes = 1;
 	//------------if completed---------------
-	if (finishLine23.isCrossed === track3laps && minutes <= track3minutes) {
+	if (finishLine3.isCrossed === track3laps && minutes <= track3minutes) {
 		level3completed = true;
 	};
+
+	level3completed = true;
 };
 
+function drawLevel4 () {
 
+	ctx.drawImage(track4Background, 0, 0, 1000, 1000);
+	track4.forEach(function (border) {
+		border.drawMe();
+
+		if (collision(car, border)) {
+			car.y += (car.speed) * Math.cos(car.rotate())	
+			car.x -= (car.speed) * Math.sin(car.rotate())
+
+			if (!collision(car, border)) {
+				car.speed = 0;
+			};
+		};
+	});
+
+	finishLine4.drawMe(track4laps);
+
+	//----------------lap count-----------
+	if (collision(car, finishLine4)) {
+		buffer ++;
+		endOfCross = false;
+	};
+	if (!collision(car, finishLine4) && buffer >0) {
+		endOfCross = true;
+	}
+	lap(finishLine4);
+
+	//----------timer------------------
+	//starting timer atfer lap started
+	if (finishLine4.isCrossed >= 0) {
+		frame++;
+		timer()
+	};
+
+	//-------------draw car----------------
+	//set starting position and rotation
+	if (carCounter === 0) {
+		car.x = 200;
+		car.y = 500;
+		car.rotation = 90;
+		carCounter++;
+	};
+
+	ctx.save();
+	car.drawMe();
+	ctx.restore();
+
+	//------------acceleration & deceleration----------
+	movementSystem()
+	goForward();
+
+	if (keyPressed === false) {
+		decelerate();
+	};
+
+	//-----------set winning parameters----------------
+	var track4laps = 3;
+	var track4minutes = 1;
+
+	//------------if completed---------------
+	if (finishLine4.isCrossed === track4laps && minutes <= track4minutes) {
+		level4completed = true;
+	};
+};
