@@ -19,7 +19,6 @@ function drawStartScreen () {
 	ctx.drawImage(startscreenImg, 0, 0, 1000, 1000);
 
 	pressedStart = false;
-
 	if (startCounter <= 30){
 		ctx.fillStyle = "white";
 		ctx.font = "bold 60px SolidSans"
@@ -168,7 +167,7 @@ class FinishLine {
 		ctx.font = "bold 40px SolidSans";
 		ctx.fillStyle = "#4E4E4E";
 		if (this.isCrossed >=0) {
-			ctx.fillText("lap counter " + this.isCrossed, 200, 950);
+			ctx.fillText("lap " + this.isCrossed, 200, 950);
 		}
 		else {
 			ctx.fillText("Get ready", 200, 950);
@@ -477,22 +476,70 @@ function movementSystem () {
 					};
 					console.log(car.rotation);
 					break;
-				case 38: //uparrow
+				case 38:
+					accelerate();
+					keyPressed = true;
+					break;
+				case 40:
+					keyPressed = true;
+					if (car.speed > 0) {
+						brake();
+					}
+					else{
+						goBackwards();
+						console.log(car.speed);
+					}
+					break;
+				case 37:
+					if (car.speed >= 0) {
+						car.rotation -= car.maniability;
+					}
+
+					else if (car.speed < 0) {
+						car.rotation += car.maniability;
+					}
+
+					if (car.rotation < 0) {
+						car.rotation += 360;
+					};
+					if (car.rotation === 360) {
+						car.rotation = 0;
+					};
+					console.log(car.rotation);		
+					break;
+				case 39:
+					if (car.speed >= 0) {
+						car.rotation += car.maniability;
+					}
+
+					else if (car.speed < 0) {
+						car.rotation -= car.maniability;
+					}
+
+					if (car.rotation === 360) {
+						car.rotation = 0;
+					};
+					console.log(car.rotation);
+					break;
+
+				case 73: //i
 					car.y -= 1;
 					console.log("car Y = " + car.y);
 					break;
-				case 40: //downarrow
+				case 75: //k
 					car.y += 1;
 					console.log("car Y = " + car.y);
 					break;
-				case 37: //left arrow
+				case 74: //j
 					car.x -=1;
 					console.log("car X = " + car.x);
 					break;
-				case 39: //right arrow
+				case 76: //l
 					car.x +=1;
 					console.log("car X = " + car.x);
 					break;
+
+
 
 				case 82: //r
 					retryCount = true;
@@ -727,7 +774,13 @@ function retry () {
 		level2completed = false;
 		level3completed = false;
 		level4completed = false;
-		level5completed = false;	
+		level5completed = false;
+
+		finishLine1.isCrossed = -1;
+		finishLine2.isCrossed = -1;
+		finishLine3.isCrossed = -1;
+		finishLine4.isCrossed = -1;
+		finishLine5.isCrossed = -1;
 
 		retryCount = false;
 	}
@@ -795,12 +848,21 @@ function drawLevel1 () {
 	//set winning parameters
 	var track1laps = 3;
 	var track1minutes = 1;
+	if (finishLine1.isCrossed >=0) {
+		ctx.font = "bold 40px SolidSans";
+			ctx.fillStyle = "#4E4E4E";
+			ctx.fillText("out of  " + track1laps, 200, 980);
+			ctx.fillText("out of " + track1minutes + " min", 550, 980);
+	};
+	ctx.font = "bold 40px SolidSans";
+		ctx.fillStyle = "white";
+		ctx.fillText("LEVEL 1", 430, 910);
 
 	// if completed
 	if (finishLine1.isCrossed === track1laps && minutes <= track1minutes) {
 		level1completed = true;
 	}
-	else if (minutes > track1minutes) {
+	else if (minutes >= track1minutes) {
 		gameOver.drawMe();
 		car.speed = 0;
 	};
@@ -880,9 +942,23 @@ function drawLevel2 () {
 	//-----------set winning parameters----------------
 	var track2laps = 3;
 	var track2minutes = 1;
+	if (finishLine2.isCrossed >=0) {
+		ctx.font = "bold 40px SolidSans";
+			ctx.fillStyle = "#4E4E4E";
+			ctx.fillText("out of  " + track2laps, 200, 980);
+			ctx.fillText("out of " + track2minutes + " mins", 550, 980);
+	};
+
+	ctx.font = "bold 40px SolidSans";
+		ctx.fillStyle = "white";
+		ctx.fillText("LEVEL 2", 430, 910);
 	//------------if completed---------------
 	if (finishLine2.isCrossed === track2laps && minutes <= track2minutes) {
 		level2completed = true;
+	}
+	else if (minutes >= track2minutes) {
+		gameOver.drawMe();
+		car.speed = 0;
 	};
 
 	
@@ -965,9 +1041,24 @@ function drawLevel3 () {
 	//-----------set winning parameters----------------
 	var track3laps = 4;
 	var track3minutes = 1;
+	if (finishLine2.isCrossed >=0) {
+		ctx.font = "bold 40px SolidSans";
+			ctx.fillStyle = "#4E4E4E";
+			ctx.fillText("out of  " + track3laps, 200, 980);
+			ctx.fillText("out of " + track3minutes + " min", 550, 980);
+	};
+
+	ctx.font = "bold 40px SolidSans";
+		ctx.fillStyle = "white";
+		ctx.fillText("LEVEL 3", 430, 910);
+
 	//------------if completed---------------
 	if (finishLine3.isCrossed === track3laps && minutes <= track3minutes) {
 		level3completed = true;
+	}
+	else if (minutes >= track3minutes) {
+		gameOver.drawMe();
+		car.speed = 0;
 	};
 
 
@@ -1032,10 +1123,23 @@ function drawLevel4 () {
 	//-----------set winning parameters----------------
 	var track4laps = 3;
 	var track4minutes = 1;
+	if (finishLine4.isCrossed >=0) {
+		ctx.font = "bold 40px SolidSans";
+			ctx.fillStyle = "#4E4E4E";
+			ctx.fillText("out of  " + track4laps, 200, 980);
+			ctx.fillText("out of " + track4minutes + " min", 550, 980);
+	};
+	ctx.font = "bold 40px SolidSans";
+		ctx.fillStyle = "white";
+		ctx.fillText("LEVEL 4", 430, 910);
 
 	//------------if completed---------------
 	if (finishLine4.isCrossed === track4laps && minutes <= track4minutes) {
 		level4completed = true;
+	}
+	else if (minutes >= track4minutes) {
+		gameOver.drawMe();
+		car.speed = 0;
 	};
 
 };
@@ -1111,10 +1215,24 @@ function drawLevel5 () {
 	//-----------set winning parameters----------------
 	var track5laps = 3;
 	var track5minutes = 3;
+	var track5seconds = 30;
+	if (finishLine5.isCrossed >=0) {
+		ctx.font = "bold 40px SolidSans";
+			ctx.fillStyle = "#4E4E4E";
+			ctx.fillText("out of  " + track5laps, 200, 980);
+			ctx.fillText("out of " + track5minutes + " min" + track5seconds + "s", 550, 980);
+	};
+	ctx.font = "bold 40px SolidSans";
+		ctx.fillStyle = "white";
+		ctx.fillText("LEVEL 5", 430, 910);
 
 	//------------if completed---------------
 	if (finishLine5.isCrossed === track5laps && minutes <= track5minutes) {
 		level5completed = true;
+	} 	
+	else if (minutes >= track5minutes && track5seconds >= track5minutes) {
+		gameOver.drawMe();
+		car.speed = 0;
 	};
 
 
