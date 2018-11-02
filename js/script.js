@@ -1,6 +1,8 @@
 var canvas = document.querySelector(".game");
-
 var ctx = canvas.getContext("2d");
+
+var spmeter = document.querySelector(".speedometer");
+var spctx = spmeter.getContext("2d");
 
 //-------------------STRART SCREEN-------------------
 
@@ -112,7 +114,7 @@ var car = {
 	rotation: 90,
 	speed: 0,
 	acceleration: 0.5,
-	maxSpeed: 30,
+	maxSpeed: 20,
 	brake: 1,
 	maniability : 7,
 	rotate: function (){
@@ -139,20 +141,15 @@ var car = {
 	     
 	    // calcul des coordonnées translatées 
 	    // A
-	      var x2 = x0 + (this.x - x0)* Math.cos((this.rotate()) * (-1)) + (this.y - y0)* Math.sin((this.rotate()) * (-1));
-	      var y2 = y0 - (this.x - x0)* Math.sin((this.rotate()) * (-1)) + (this.y - y0)* Math.cos((this.rotate()) * (-1));
-	      // B
-	      var x4 = x0 - (this.x - x0)* Math.cos((this.rotate()) * (-1)) + (this.y - y0)* Math.sin((this.rotate()) * (-1));
-	      var y4 = y0 + (this.x - x0)* Math.sin((this.rotate()) * (-1)) + (this.y - y0)* Math.cos((this.rotate()) * (-1));
-	      // C
-	      var x5 = x0 + (this.x - x8)* Math.cos((this.rotate()) * (-1)) + (this.y - y8)* Math.sin((this.rotate()) * (-1));
-	      var y5 = y0 - (this.x - x8)* Math.sin((this.rotate()) * (-1)) + (this.y - y8)* Math.cos((this.rotate()) * (-1));
-	      //  D
-	      var x3 = x0 - (this.x - x8)* Math.cos((this.rotate()) * (-1)) + (this.y - y8)* Math.sin((this.rotate()) * (-1));
-      	  var y3 = y0 + (this.x - x8)* Math.sin((this.rotate()) * (-1)) + (this.y - y8)* Math.cos((this.rotate()) * (-1));
-  // ------------------ CERCLES DE TESTS ---------------------------------------------------------------------
-		   
-
+	    var x2 = x0 + (this.x - x0)* Math.cos((this.rotate()) * (-1)) + (this.y - y0)* Math.sin((this.rotate()) * (-1));
+	    var y2 = y0 - (this.x - x0)* Math.sin((this.rotate()) * (-1)) + (this.y - y0)* Math.cos((this.rotate()) * (-1));
+	    // B
+	    var x4 = x0 - (this.x - x0)* Math.cos((this.rotate()) * (-1)) + (this.y - y0)* Math.sin((this.rotate()) * (-1));      var y4 = y0 + (this.x - x0)* Math.sin((this.rotate()) * (-1)) + (this.y - y0)* Math.cos((this.rotate()) * (-1));
+	    // C
+	    var x5 = x0 + (this.x - x8)* Math.cos((this.rotate()) * (-1)) + (this.y - y8)* Math.sin((this.rotate()) * (-1));
+	    var y5 = y0 - (this.x - x8)* Math.sin((this.rotate()) * (-1)) + (this.y - y8)* Math.cos((this.rotate()) * (-1));      //  D
+	    var x3 = x0 - (this.x - x8)* Math.cos((this.rotate()) * (-1)) + (this.y - y8)* Math.sin((this.rotate()) * (-1));
+      	var y3 = y0 + (this.x - x8)* Math.sin((this.rotate()) * (-1)) + (this.y - y8)* Math.cos((this.rotate()) * (-1));
 		this.coord = [  {x: x2, y: y2}, //A
                       	{x: x3, y: y3}, //B
                       	{x: x4, y: y4}, //C
@@ -164,26 +161,6 @@ var car = {
       this.maxY = Math.max (this.coord[0].y, this.coord[1].y, this.coord[2].y, this.coord[3].y);
       this.minY = Math.min (this.coord[0].y, this.coord[1].y, this.coord[2].y, this.coord[3].y);
 
-       ctx.beginPath();
-	  ctx.arc(x2, y2 , 5, 0, 2*Math.PI);
-	  ctx.fillStyle = "yellow";
-	  ctx.fill();
-	  ctx.closePath();
-	  ctx.beginPath();
-	  ctx.arc(x3, y3, 5, 0, 2*Math.PI);
-	  ctx.fillStyle = "purple";
-	  ctx.fill();
-	  ctx.closePath();
-	  ctx.beginPath();
-	  ctx.arc(x4, y4, 5, 0, 2*Math.PI);
-	  ctx.fillStyle = "red";
-	  ctx.fill();
-	  ctx.closePath();
-	  ctx.beginPath();
-	  ctx.arc(x5, y5, 5, 0, 2*Math.PI);
-	  ctx.fillStyle = "blue";
-	  ctx.fill();
-	  ctx.closePath();
 	}
 };
 
@@ -203,7 +180,7 @@ class Border {
 	}
 
 	drawMe () {
-		ctx.fillStyle = "#971E1E"
+		ctx.fillStyle = "transparent"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
@@ -360,7 +337,7 @@ var track3 = [
 	new Border(0, 145, 750, 15),
 	new Border(0, 290, 1000, 15),
 	new Border(0, 365, 1000, 15),
-	new Border(190, 510, 810, 15),
+	new Border(190, 510	, 810, 15),
 	new Border(150, 650, 850, 15),
 	new Border(150, 790, 850, 15),
 
@@ -453,6 +430,8 @@ function goBackwards () {
 	if (car.speed < car.maxSpeed) {
 		car.speed -= car.acceleration;
 	};
+
+	isBraking =	false;
 };
 
 //-------------------acceleration-------------
@@ -460,13 +439,19 @@ function accelerate () {
 	if (car.speed < car.maxSpeed) {
 		car.speed += car.acceleration;
 	};
+
+	isBraking = false;
 };
 
 //---------------------brake--------------------
+
+var isBraking = false;
 function brake () {
 	if (car.speed > 0) {
 		car.speed -= car.brake
 	};
+	isBraking = true;
+
 };
 
 //--------------deceleration---------------------
@@ -480,6 +465,8 @@ function decelerate () {
 	if (car.speed > -0.5 && car.speed < 0.5) {
 		car.speed = 0;
 	};
+
+	isBraking = false;
 };
 
 //--------------collision detection-----------
@@ -731,7 +718,8 @@ var level5completed = false;
 function drawingLoopGame () {
 	
 
-	ctx.clearRect(0, 0, 1000, 1000)
+	ctx.clearRect(0, 0, 1000, 1000);
+	spctx.clearRect(0, 0, 300, 300);
 
 	movingBackground(backgroundWaves1, backgroundWaves2);
 
@@ -747,6 +735,8 @@ function drawingLoopGame () {
 
 	
 	displayStats();
+	meter();
+
 
 
 	//request next frame
@@ -881,7 +871,7 @@ function drawWinScreen () {
 
 	ctx.font = "40px SolidSans";
 	ctx.fillStyle = "#BAF";
-	ctx.fillText('Press "R" key to retry', 275, 600);
+	ctx.fillText('Press "R" key to retry', 275, 620);
 
 	retry();
 };
@@ -935,12 +925,9 @@ function drawLevel1 () {
 	
 	
 		if (isCrashed(car.coord, border.coord)) {
-			car.y += (car.speed) * Math.cos(car.rotate())	
-			car.x -= (car.speed) * Math.sin(car.rotate())
+			car.speed = 0;
 
-			if (!collision(car, border)) {
-				car.speed = 0;
-			};
+			
 		};
 	});
 	finishLine1.drawMe(track1laps);
@@ -1081,7 +1068,7 @@ function drawLevel2 () {
 		ctx.font = "bold 40px SolidSans";
 			ctx.fillStyle = "#4E4E4E";
 			ctx.fillText("out of  " + track2laps, 200, 980);
-			ctx.fillText("out of " + track2minutes + " mins", 550, 980);
+			ctx.fillText("out of " + track2minutes + " min", 550, 980);
 	};
 
 	ctx.font = "bold 40px SolidSans";
@@ -1330,11 +1317,11 @@ function drawLevel5 () {
 
 	//--------------teleportation------------------
 
-	if ((car.y > 450 && car.y < 530) && (car.x > 660 && car.x < 700)) {
-		car.x -= 240;
+	if ((car.y > 450 && car.y < 530) && (car.x > 660 && car.x < 680)) {
+		car.x -= 210;
 	};
 
-	if ((car.y > 327 && car.y < 395) && (car.x > 470 && car.x < 490)) {
+	if ((car.y > 310 && car.y < 400) && (car.x > 462 && car.x < 490)) {
 		car.x += 210;
 		car.rotation = 90;
 	};
@@ -1366,7 +1353,7 @@ function drawLevel5 () {
 	if (finishLine5.isCrossed === track5laps && minutes <= track5minutes) {
 		level5completed = true;
 	} 	
-	else if (minutes >= track5minutes && track5seconds >= track5minutes) {
+	else if (minutes >= track5minutes && track5seconds >= track5seconds) {
 		gameOver.drawMe();
 		car.speed = 0;
 	};
@@ -1426,3 +1413,49 @@ function displayStats () {
 
 	$(".side").removeClass("hidden");
 };
+
+
+
+
+
+//speedometer
+
+function meter () {
+
+
+	var speedPercent = car.speed / car.maxSpeed;
+
+	if (car.speed === 0) {
+		speedPercent = 0.001;
+	};
+	var degreePercent = 360 * speedPercent;
+	var radPercent = degreePercent * Math.PI/180;
+
+	spctx.save();
+	spctx.translate(150,150),
+	spctx.rotate(90 * Math.PI/180);
+
+	spctx.beginPath();
+	spctx.arc(0, 0 , 85, 0, radPercent);
+	spctx.fillStyle = "#D3F8F6";
+	spctx.fill();
+	spctx.closePath();
+	spctx.beginPath();
+	spctx.arc(20, 0 , 65, 0, 360 * Math.PI/180);
+	spctx.fillStyle = "white";
+	spctx.fill();
+	spctx.closePath();
+
+	spctx.restore();
+	spctx.font = "	40px SolidSans";
+	spctx.fillStyle = "#4E4E4E";
+	spctx.fillText(Math.floor(car.speed), 135, 180);
+
+	if (isBraking) {
+		spctx.beginPath();
+		spctx.arc(200, 230, 7,0, 360 * Math.PI/180)
+		spctx.fillStyle = "#4E4E4E";
+		spctx.fill();
+		spctx.closePath();
+	}
+}
