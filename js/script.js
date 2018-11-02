@@ -620,12 +620,25 @@ function drawingLoopGame () {
 
 	//--------------movement system----------------
 	movementSystem();
-	requestAnimationFrame(function () {
+	// side controls
 
-		if (!retryCount) {
+	
+	displayStats();
+
+
+	//request next frame
+	if (!retryCount) {
+		requestAnimationFrame(function () {
+
 			drawingLoopGame();	
-		}
-	});
+		
+		});
+	}
+
+	else if (retryCount) {
+		return;
+	}; 
+		
 };
 
 var reset = 0
@@ -1236,4 +1249,57 @@ function drawLevel5 () {
 	};
 
 
+};
+
+var msPlusBtn = $(".ms-plus");
+var msMinusBtn = $(".ms-minus");
+var accPlusBtn = $(".acc-plus");
+var accMinusBtn = $(".acc-minus");
+var brPlusBtn = $(".br-plus");
+var brMinusBtn = $(".br-minus");
+var mnPlusBtn = $(".mn-plus");
+var mnMinusBtn = $(".mn-minus");
+
+var maxSpeed = $(".max-speed");
+var acc = $(".acc");
+var brakes = $(".brakes");
+var maniability = $(".maniab");
+
+
+	msPlusBtn.click(function () {
+		car.maxSpeed +=1;
+	});
+	msMinusBtn.click(function () {
+		car.maxSpeed -=1;
+	});
+
+	accPlusBtn.click(function () {
+		car.acceleration +=0.1;
+	});
+	accMinusBtn.click(function () {
+		car.acceleration -=0.1;
+	});
+
+	brPlusBtn.click(function () {
+		car.brake +=1;
+	});
+	brMinusBtn.click(function () {
+		car.brake -=1;
+	});
+
+	mnPlusBtn.click(function () {
+		car.maniability +=1;
+	});
+	mnMinusBtn.click(function () {
+		car.maniability -=1;
+	});
+
+
+function displayStats () {
+	maxSpeed.html(car.maxSpeed);
+	acc.html(Math.round( car.acceleration * 10 ) / 10);
+	brakes.html(car.brake);
+	maniability.html(car.maniability);
+
+	$(".side").removeClass("hidden");
 };

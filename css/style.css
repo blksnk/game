@@ -47,6 +47,12 @@ ul {
 
 }
 
+p {
+	font-family: "SolidSans", SolidSans;
+	font-size: 45px;
+	line-height: 50px;
+}
+
 canvas {
 	width: 1000px;
 	height: 1000px;
@@ -62,10 +68,32 @@ canvas {
 
 .side {
 	padding-top: 120px;
-	width: 400px;
+	width: 450px;
 }
 
 .main {
 	display: flex;
 	justify-content: space-around;
+}
+
+h3, p {
+	display: inline-block;
+}
+
+button {
+	background-color: white;
+	border: 3px solid #C1E8EE;
+	padding: 4px 15px;
+	margin-bottom: 5px;
+	font-size: 20px;
+	display: inline-block;
+}
+
+.hidden {
+	opacity: 0;
+}
+
+.modifier {
+	line-height: 0;
+	padding: 0;
 }
