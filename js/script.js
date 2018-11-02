@@ -119,12 +119,71 @@ var car = {
 		return this.rotation * Math.PI/180;
 	},
 	drawMe: function () {
-
+		ctx.save();
 		ctx.translate(this.x+this.width/2, this.y+this.height/2	)
 		ctx.rotate(this.rotate());
 
 
 		ctx.drawImage(carImg, -this.width/2, -this.height/2, this.width, this.height);
+
+		ctx.restore();
+		//code de regis
+
+		var x0 = this.x + this.width /2;
+	    var y0 = this.y + this.height /2;
+	    var x8 = this.x - this.width /2;
+	    var y8 = this.y - this.height /2;
+	    
+
+	  // Récupère le bon angle (opposé à l'angle de départ) 
+	     
+	    // calcul des coordonnées translatées 
+	    // A
+	      var x2 = x0 + (this.x - x0)* Math.cos((this.rotate()) * (-1)) + (this.y - y0)* Math.sin((this.rotate()) * (-1));
+	      var y2 = y0 - (this.x - x0)* Math.sin((this.rotate()) * (-1)) + (this.y - y0)* Math.cos((this.rotate()) * (-1));
+	      // B
+	      var x4 = x0 - (this.x - x0)* Math.cos((this.rotate()) * (-1)) + (this.y - y0)* Math.sin((this.rotate()) * (-1));
+	      var y4 = y0 + (this.x - x0)* Math.sin((this.rotate()) * (-1)) + (this.y - y0)* Math.cos((this.rotate()) * (-1));
+	      // C
+	      var x5 = x0 + (this.x - x8)* Math.cos((this.rotate()) * (-1)) + (this.y - y8)* Math.sin((this.rotate()) * (-1));
+	      var y5 = y0 - (this.x - x8)* Math.sin((this.rotate()) * (-1)) + (this.y - y8)* Math.cos((this.rotate()) * (-1));
+	      //  D
+	      var x3 = x0 - (this.x - x8)* Math.cos((this.rotate()) * (-1)) + (this.y - y8)* Math.sin((this.rotate()) * (-1));
+      	  var y3 = y0 + (this.x - x8)* Math.sin((this.rotate()) * (-1)) + (this.y - y8)* Math.cos((this.rotate()) * (-1));
+  // ------------------ CERCLES DE TESTS ---------------------------------------------------------------------
+		   
+
+		this.coord = [  {x: x2, y: y2}, //A
+                      	{x: x3, y: y3}, //B
+                      	{x: x4, y: y4}, //C
+                      	{x: x5, y: y5}, //D
+                    ];
+
+      this.maxX = Math.max (this.coord[0].x, this.coord[1].x, this.coord[2].x, this.coord[3].x);
+      this.minX = Math.min (this.coord[0].x, this.coord[1].x, this.coord[2].x, this.coord[3].x);
+      this.maxY = Math.max (this.coord[0].y, this.coord[1].y, this.coord[2].y, this.coord[3].y);
+      this.minY = Math.min (this.coord[0].y, this.coord[1].y, this.coord[2].y, this.coord[3].y);
+
+       ctx.beginPath();
+	  ctx.arc(x2, y2 , 5, 0, 2*Math.PI);
+	  ctx.fillStyle = "yellow";
+	  ctx.fill();
+	  ctx.closePath();
+	  ctx.beginPath();
+	  ctx.arc(x3, y3, 5, 0, 2*Math.PI);
+	  ctx.fillStyle = "purple";
+	  ctx.fill();
+	  ctx.closePath();
+	  ctx.beginPath();
+	  ctx.arc(x4, y4, 5, 0, 2*Math.PI);
+	  ctx.fillStyle = "red";
+	  ctx.fill();
+	  ctx.closePath();
+	  ctx.beginPath();
+	  ctx.arc(x5, y5, 5, 0, 2*Math.PI);
+	  ctx.fillStyle = "blue";
+	  ctx.fill();
+	  ctx.closePath();
 	}
 };
 
@@ -136,10 +195,15 @@ class Border {
 		this.width = borderWidth;
 		this.height = borderHeight;
 		this.isCrashed = false;
+		this.coord = [  {x: this.x,               y: this.y},
+	                    {x: this.x + this.width,  y: this.y},
+	                    {x: this.x + this.width,  y: this.y + this.height},
+                  		{x: this.x,               y: this.y + this.height}
+                ];
 	}
 
 	drawMe () {
-		ctx.fillStyle = "transparent"
+		ctx.fillStyle = "#971E1E"
 			
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
@@ -296,7 +360,7 @@ var track3 = [
 	new Border(0, 145, 750, 15),
 	new Border(0, 290, 1000, 15),
 	new Border(0, 365, 1000, 15),
-	new Border(190, 505, 810, 15),
+	new Border(190, 510, 810, 15),
 	new Border(150, 650, 850, 15),
 	new Border(150, 790, 850, 15),
 
@@ -424,6 +488,65 @@ function collision (car, border) {
 		&&	car.y <= border.y + border.height
 		&& car.x + car.width >= border.x
 		&& car.x <= border.x + border.width;	
+};
+
+function isUndefined(a) {
+  return a === undefined;
+}
+function isCrashed (a, b) {
+  var polygons = [a, b];
+  var minA, maxA, projected, i, i1, j, minB, maxB;
+
+  for (i = 0; i < polygons.length; i++) {
+
+      // for each polygon, look at each edge of the polygon, and determine if it separates
+      // the two shapes
+      var polygon = polygons[i];
+      for (i1 = 0; i1 < polygon.length; i1++) {
+
+          // grab 2 vertices to create an edge
+          var i2 = (i1 + 1) % polygon.length;
+          var p1 = polygon[i1];
+          var p2 = polygon[i2];
+
+          // find the line perpendicular to this edge
+          var normal = { x: p2.y - p1.y, y: p1.x - p2.x };
+
+          minA = maxA = undefined;
+          // for each vertex in the first shape, project it onto the line perpendicular to the edge
+          // and keep track of the min and max of these values
+          for (j = 0; j < a.length; j++) {
+              projected = normal.x * a[j].x + normal.y * a[j].y;
+              if (isUndefined(minA) || projected < minA) {
+                  minA = projected;
+              }
+              if (isUndefined(maxA) || projected > maxA) {
+                  maxA = projected;
+              }
+          }
+
+          // for each vertex in the second shape, project it onto the line perpendicular to the edge
+          // and keep track of the min and max of these values
+          minB = maxB = undefined;
+          for (j = 0; j < b.length; j++) {
+              projected = normal.x * b[j].x + normal.y * b[j].y;
+              if (isUndefined(minB) || projected < minB) {
+                  minB = projected;
+              }
+              if (isUndefined(maxB) || projected > maxB) {
+                  maxB = projected;
+              }
+          }
+
+          // if there is no overlap between the projects, the edge we are looking at separates the two
+          // polygons, and we know there is no overlap
+          if (maxA < minB || maxB < minA) {
+              // console.log("polygons don't intersect!");
+              return false;
+          }
+      }
+  }
+  return true;
 };
 
 //--------------movement system-------------
@@ -647,8 +770,6 @@ var carCounter = 0;
 //level switcher
 function levelSwitcher () {
 
-	
-
 	if (!level1completed) {
 		drawLevel1();
 	}
@@ -806,10 +927,14 @@ function retry () {
 function drawLevel1 () {
 	
 	ctx.drawImage(track1Background, 0, 0, 1000, 1000);
+
+	car.drawMe();
+	
 	track1.forEach(function (border) {
 		border.drawMe();
-
-		if (collision(car, border)) {
+	
+	
+		if (isCrashed(car.coord, border.coord)) {
 			car.y += (car.speed) * Math.cos(car.rotate())	
 			car.x -= (car.speed) * Math.sin(car.rotate())
 
@@ -846,9 +971,6 @@ function drawLevel1 () {
 		carCounter++;
 	};
 
-	ctx.save();
-	car.drawMe();
-	ctx.restore();
 
 	//------------acceleration & deceleration----------
 	movementSystem();
@@ -888,10 +1010,13 @@ function drawLevel1 () {
 function drawLevel2 () {
 
 	ctx.drawImage(track2Background, 0, 0, 1000, 1000);
+	
+	car.drawMe();
+
 	track2.forEach(function (border) {
 		border.drawMe();
 
-		if (collision(car, border)) {
+		if (isCrashed(car.coord, border.coord)) {
 			car.y += (car.speed) * Math.cos(car.rotate())	
 			car.x -= (car.speed) * Math.sin(car.rotate())
 
@@ -931,9 +1056,6 @@ function drawLevel2 () {
 		carCounter++;
 	};
 
-	ctx.save();
-	car.drawMe();
-	ctx.restore();
 
 	//------right to left teleportation-------
 	if (car.x > 1000) {
@@ -983,10 +1105,13 @@ function drawLevel2 () {
 function drawLevel3 () {
 
 	ctx.drawImage(track3Background, 0, 0, 1000, 1000);
+
+	car.drawMe();
+
 	track3.forEach(function (border) {
 		border.drawMe();
 
-		if (collision(car, border)) {
+		if (isCrashed(car.coord, border.coord)) {
 			car.y += (car.speed) * Math.cos(car.rotate())	
 			car.x -= (car.speed) * Math.sin(car.rotate())
 
@@ -1023,9 +1148,6 @@ function drawLevel3 () {
 		car.rotation = 270;
 		carCounter++;
 	};
-	ctx.save();
-	car.drawMe();
-	ctx.restore();
 
 	//--------------teleportation---------------
 	if (car.x + car.width < 0 && (car.y >600 && car.y < 800)) {
@@ -1054,7 +1176,7 @@ function drawLevel3 () {
 	//-----------set winning parameters----------------
 	var track3laps = 4;
 	var track3minutes = 1;
-	if (finishLine2.isCrossed >=0) {
+	if (finishLine3.isCrossed >=0) {
 		ctx.font = "bold 40px SolidSans";
 			ctx.fillStyle = "#4E4E4E";
 			ctx.fillText("out of  " + track3laps, 200, 980);
@@ -1080,10 +1202,13 @@ function drawLevel3 () {
 function drawLevel4 () {
 
 	ctx.drawImage(track4Background, 0, 0, 1000, 1000);
+
+	car.drawMe();
+
 	track4.forEach(function (border) {
 		border.drawMe();
 
-		if (collision(car, border)) {
+		if (isCrashed(car.coord, border.coord)) {
 			car.y += (car.speed) * Math.cos(car.rotate())	
 			car.x -= (car.speed) * Math.sin(car.rotate())
 
@@ -1121,9 +1246,6 @@ function drawLevel4 () {
 		carCounter++;
 	};
 
-	ctx.save();
-	car.drawMe();
-	ctx.restore();
 
 	//------------acceleration & deceleration----------
 	movementSystem()
@@ -1160,10 +1282,14 @@ function drawLevel4 () {
 function drawLevel5 () {
 
 	ctx.drawImage(track5Background, 0, 0, 1000, 1000);
+
+	car.drawMe();
+
 	track5.forEach(function (border) {
 		border.drawMe();
 
-		if (collision(car, border)) {
+		if (isCrashed(car.coord, border.coord)) {
+
 			car.y += (car.speed) * Math.cos(car.rotate())	
 			car.x -= (car.speed) * Math.sin(car.rotate())
 
@@ -1201,13 +1327,10 @@ function drawLevel5 () {
 		carCounter++;
 	};
 
-	ctx.save();
-	car.drawMe();
-	ctx.restore();
 
 	//--------------teleportation------------------
 
-	if ((car.y > 456 && car.y < 521) && (car.x > 660 && car.x < 700)) {
+	if ((car.y > 450 && car.y < 530) && (car.x > 660 && car.x < 700)) {
 		car.x -= 240;
 	};
 
@@ -1227,7 +1350,7 @@ function drawLevel5 () {
 
 	//-----------set winning parameters----------------
 	var track5laps = 3;
-	var track5minutes = 3;
+	var track5minutes = 2;
 	var track5seconds = 30;
 	if (finishLine5.isCrossed >=0) {
 		ctx.font = "bold 40px SolidSans";
