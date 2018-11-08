@@ -741,14 +741,17 @@ function drawingLoopGame () {
 
 	//request next frame
 	if (!retryCount) {
-		requestAnimationFrame(function () {
+		setInterval(
+			requestAnimationFrame(function () {
 
 			drawingLoopGame();	
 		
-		});
+			})
+		, 1000 / 60)
 	}
 
 	else if (retryCount) {
+
 		return;
 	}; 
 		
